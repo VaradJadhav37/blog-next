@@ -3,6 +3,7 @@ import { client } from '@/sanity/lib/client'
 import { getPostbyIdQuery } from '@/lib/queries'
 import { Eye } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
+import View from '@/app/components/view'
 
 interface Post {
   _id: string
@@ -24,7 +25,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
   const post: Post = await client.fetch(getPostbyIdQuery, { id })
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-yellow-50 via-rose-100 to-blue-50 px-4 py-12">
+    <main className="relative min-h-screen bg-gradient-to-br from-yellow-50 via-rose-100 to-blue-50 px-4 py-12">
       <article className="max-w-4xl mx-auto bg-white shadow-md rounded-2xl overflow-hidden">
         {post.image && (
           <img
@@ -64,6 +65,11 @@ const Page = async ({ params }: { params: { id: string } }) => {
           </div>
         </div>
       </article>
+
+      {/* Views component in bottom-right corner */}
+      <div className="fixed bottom-4 right-4 z-50">
+        <View id={post._id} />
+      </div>
     </main>
   )
 }

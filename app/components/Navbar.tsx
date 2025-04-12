@@ -34,7 +34,7 @@ const Navbar = async () => {
           {session?.user ? (
             <>
               {/* Create Post */}
-              <Link href="/startup/create">
+              <Link href="/posts/create">
                 <button className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full shadow-md hover:from-indigo-600 hover:to-purple-600 transition">
                   + Create Post
                 </button>
