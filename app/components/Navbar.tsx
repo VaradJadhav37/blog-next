@@ -9,12 +9,12 @@ const Navbar = async () => {
     <header className="sticky top-0 z-50 bg-white/60 backdrop-blur-md shadow-md border-b border-white/30">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         {/* Logo / Brand */}
-        <Link href="/" className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-0">
           <img
             src="/Yellow_Black_Playful_Lamp_Bulb_Idea_Company_Logo-removebg-preview.png"
             alt="The Idea Hive Logo"
-            width={40}
-            height={40}
+            width={90}
+            height={50}
             className="object-contain drop-shadow-md"
           />
           <span className="text-xl font-bold text-indigo-700 tracking-tight drop-shadow-sm">

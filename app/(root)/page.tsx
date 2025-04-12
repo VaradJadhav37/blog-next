@@ -6,7 +6,8 @@ import { client } from '@/sanity/lib/client'
 import { getAllPostsQuery } from '@/lib/queries'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Search, Eye, ArrowRight } from 'lucide-react'
-
+import { Button } from "@/components/ui/button"
+import { Typewriter } from 'react-simple-typewriter'
 interface Author {
   _id: string
   name: string
@@ -43,17 +44,26 @@ export default function Home() {
   }, [])
 
   const filteredBlogs = blogs.filter((blog) =>
-    blog.title.toLowerCase().includes(searchQuery.toLowerCase())
+    (blog.title.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    (blog.category.toLowerCase().includes(searchQuery.toLowerCase())) 
   )
 
   return (
     <main className="min-h-screen px-4 py-12 bg-gradient-to-br from-yellow-100 via-pink-100 to-blue-100">
       {/* Hero Section */}
       <section className="text-center max-w-3xl mx-auto mb-16">
-        <h1 className="text-5xl sm:text-6xl font-extrabold text-pink-600 drop-shadow-md mb-4">
-          Reflect. Write. Inspire
+        <h1 className="text-5xl sm:text-6xl font-extrabold text-pink-600 mb-4">
+        <Typewriter
+        words={['Reflect.', 'Write.', 'Inspire.']}
+        loop={0} // 0 = infinite loop
+        cursor
+        cursorStyle="|"
+        typeSpeed={80}
+        deleteSpeed={60}
+        delaySpeed={1250}
+      />
         </h1>
-        <p className="text-xl text-gray-700 mb-8">
+        <p className="text-xl text-gray-700 mb-8 ">
           Explore tutorials, insights, and articles on modern web development.
         </p>
 
@@ -64,11 +74,12 @@ export default function Home() {
             placeholder="Search blog posts..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full sm:w-96 px-5 py-3 border border-pink-300 bg-white rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-pink-400"
+            className="w-full sm:w-96 px-5 py-3 border-3 border-pink-300/50 bg-white rounded-full shadow-xl focus:outline-none focus:ring-2 focus:ring-pink-700/50"
           />
-          <button className="bg-pink-500 text-white px-6 py-3 rounded-full hover:bg-pink-600 transition shadow-lg">
-            <Search />
-          </button>
+          <button className="bg-pink-500 text-white px-6 py-3 border-3 border-pink-100/50 rounded-full hover:bg-pink-600 transition shadow-xl">
+  <Search />
+</button>
+
         </div>
       </section>
 
@@ -77,20 +88,13 @@ export default function Home() {
         {filteredBlogs.length > 0 ? (
           filteredBlogs.map((blog) => (
             <Link href={`/blog/${blog._id}`} key={blog._id}>
-              <Card className="group h-full flex flex-col rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-pink-100/50 bg-white/80 backdrop-blur-sm hover:border-pink-200 hover:bg-white">
-                {blog.image && (
-                  <div className="relative overflow-hidden h-48">
-                    <img
-                      src={blog.image}
-                      alt={blog.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                  </div>
-                )}
-
+              <Card className="group h-full flex flex-col  rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border-t-0 border-l-0 border-r-6 border-b-6 border-pink-600/50 bg-white/80 backdrop-blur-sm hover:border-pink-600/50 hover:bg-white hover:-translate-y-5 ">
                 <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2 mb-2">
+                <CardTitle className="text-xl font-bold text-gray-800 line-clamp-2 group-hover:text-pink-600 transition-colors">
+                    {blog.title}
+                  </CardTitle>
+                  <div className="flex items-center gap-2 mt-3">
+                
                     {blog.author?.image && (
                       <img
                         src={blog.author.image}
@@ -102,9 +106,7 @@ export default function Home() {
                       {blog.author?.name}
                     </span>
                   </div>
-                  <CardTitle className="text-xl font-bold text-gray-800 line-clamp-2 group-hover:text-pink-600 transition-colors">
-                    {blog.title}
-                  </CardTitle>
+                 
                 </CardHeader>
 
                 <CardContent className="mt-auto">
@@ -117,11 +119,22 @@ export default function Home() {
                       {blog.category}
                     </span>
                   </div>
-
-                  <div className="flex items-center text-sm font-medium text-pink-600 group-hover:text-pink-500 transition-colors">
-                    Read more
-                    <ArrowRight className="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  {blog.image && (
+                  <div className="relative rounded-md overflow-hidden h-48">
+                    <img
+                      src={blog.image}
+                      alt={blog.title}
+                      className="w-full h-full rounded-md object-cover transition-transform duration-500 group-hover:scale-105 "
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                   </div>
+                )}
+                  <Button variant="secondary" className="mt-4 w-full text-left hover:bg-pink-200/80 transition-colors color-pink-600">
+                  <div className="flex items-center py-5 text-sm font-medium text-pink-600 hover:text-pink-500 transition-colors">
+                    Read more
+                    <ArrowRight className="ml-1 w-4 h-4 transition-transform hover:translate-x-1" />
+                  </div>
+                  </Button>
                 </CardContent>
               </Card>
             </Link>
