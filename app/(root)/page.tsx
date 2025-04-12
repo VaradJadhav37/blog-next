@@ -1,48 +1,59 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { client } from '@/sanity/lib/client'
+import { getAllPostsQuery } from '@/lib/queries'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { Search, Eye, ArrowRight } from 'lucide-react'
+
+interface Author {
+  _id: string
+  name: string
+  image: string
+  bio: string
+}
 
 interface Blog {
-  id: number
+  _id: string
   title: string
-  description: string
+  slug: string
+  views: number
+  category: string
+  content: string
+  image: string
+  author: Author
 }
 
 export default function Home() {
+  const [blogs, setBlogs] = useState<Blog[]>([])
   const [searchQuery, setSearchQuery] = useState('')
 
-  const blogs: Blog[] = [
-    {
-      id: 1,
-      title: 'Building a Blog with Next.js and Tailwind CSS',
-      description: 'Learn how to structure a modern blog using Next.js and Tailwind for styling.',
-    },
-    {
-      id: 2,
-      title: 'Deploying Your App to Vercel',
-      description: 'A guide to deploying full-stack apps using Vercel’s powerful platform.',
-    },
-    {
-      id: 3,
-      title: 'Understanding the App Router in Next.js 13+',
-      description: 'Dive into Next.js’s new App Router and how it helps build scalable apps.',
-    },
-  ]
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const posts: Blog[] = await client.fetch(getAllPostsQuery)
+        setBlogs(posts)
+      } catch (error) {
+        console.error('Error fetching posts:', error)
+      }
+    }
 
-  const filteredBlogs = blogs.filter(blog =>
+    fetchBlogs()
+  }, [])
+
+  const filteredBlogs = blogs.filter((blog) =>
     blog.title.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   return (
-    <main className="bg-neutral-100 min-h-screen px-4 py-12">
+    <main className="min-h-screen px-4 py-12 bg-gradient-to-br from-yellow-100 via-pink-100 to-blue-100">
       {/* Hero Section */}
       <section className="text-center max-w-3xl mx-auto mb-16">
-        <h1 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4">
-          Welcome to My Blog
+        <h1 className="text-5xl sm:text-6xl font-extrabold text-pink-600 drop-shadow-md mb-4">
+          Reflect. Write. Inspire
         </h1>
-        <p className="text-lg text-neutral-600 mb-8">
+        <p className="text-xl text-gray-700 mb-8">
           Explore tutorials, insights, and articles on modern web development.
         </p>
 
@@ -53,35 +64,80 @@ export default function Home() {
             placeholder="Search blog posts..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full sm:w-96 px-4 py-2 border border-neutral-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-neutral-500"
+            className="w-full sm:w-96 px-5 py-3 border border-pink-300 bg-white rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-pink-400"
           />
-          <button className="bg-neutral-900 text-white px-6 py-2 rounded-md hover:bg-neutral-800 transition">
-            Search
+          <button className="bg-pink-500 text-white px-6 py-3 rounded-full hover:bg-pink-600 transition shadow-lg">
+            <Search />
           </button>
         </div>
       </section>
 
       {/* Blog Cards */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
         {filteredBlogs.length > 0 ? (
           filteredBlogs.map((blog) => (
-            <Card key={blog.id} className="shadow-md hover:shadow-lg transition-shadow duration-200 bg-white">
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold">{blog.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-neutral-600 mb-4">{blog.description}</p>
-                <Link
-                  href={`/blog/${blog.id}`}
-                  className="text-sm font-medium text-neutral-800 underline hover:text-neutral-600"
-                >
-                  Read More →
-                </Link>
-              </CardContent>
-            </Card>
+            <Link href={`/blog/${blog._id}`} key={blog._id}>
+              <Card className="group h-full flex flex-col rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-pink-100/50 bg-white/80 backdrop-blur-sm hover:border-pink-200 hover:bg-white">
+                {blog.image && (
+                  <div className="relative overflow-hidden h-48">
+                    <img
+                      src={blog.image}
+                      alt={blog.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                  </div>
+                )}
+
+                <CardHeader className="pb-2">
+                  <div className="flex items-center gap-2 mb-2">
+                    {blog.author?.image && (
+                      <img
+                        src={blog.author.image}
+                        alt={blog.author.name}
+                        className="w-8 h-8 rounded-full object-cover border-2 border-pink-200"
+                      />
+                    )}
+                    <span className="font-medium text-sm text-gray-700">
+                      {blog.author?.name}
+                    </span>
+                  </div>
+                  <CardTitle className="text-xl font-bold text-gray-800 line-clamp-2 group-hover:text-pink-600 transition-colors">
+                    {blog.title}
+                  </CardTitle>
+                </CardHeader>
+
+                <CardContent className="mt-auto">
+                  <div className="flex justify-between items-center mb-3">
+                    <div className="flex items-center gap-1 text-sm text-gray-500">
+                      <Eye className="w-4 h-4 text-pink-400" />
+                      <span>{blog.views ?? 0} views</span>
+                    </div>
+                    <span className="bg-pink-100/80 text-pink-700 px-3 py-1 rounded-full text-xs font-semibold border border-pink-200/50 group-hover:bg-pink-200/80 group-hover:border-pink-300 transition-colors">
+                      {blog.category}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center text-sm font-medium text-pink-600 group-hover:text-pink-500 transition-colors">
+                    Read more
+                    <ArrowRight className="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           ))
         ) : (
-          <p className="col-span-full text-center text-neutral-500">No blogs found.</p>
+          <div className="col-span-full text-center py-12">
+            <p className="text-xl text-gray-500">
+              No blogs found matching your search.
+            </p>
+            <button 
+              onClick={() => setSearchQuery('')}
+              className="mt-4 text-pink-600 hover:text-pink-700 font-medium underline"
+            >
+              Clear search
+            </button>
+          </div>
         )}
       </section>
     </main>
