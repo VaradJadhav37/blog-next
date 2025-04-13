@@ -1,4 +1,5 @@
 import Navbar from "../components/Navbar";
+import Providers from "../providers";
 export default function Layout({
   children,
 }: Readonly<{
@@ -7,7 +8,7 @@ export default function Layout({
   return (
     <main className="font-work-sans">
         <Navbar />
-      {children}
+      <Providers>{children}</Providers> 
     </main>
   );
 }

@@ -7,7 +7,7 @@ const Navbar = async () => {
   const user = session?.user;
 
   return (
-    <header className="sticky top-0 z-50 bg-white/60 backdrop-blur-md shadow-md border-b border-white/30">
+    <header className="sticky top-0 z-50 bg-rose-100/50 backdrop-blur-md shadow-md border-b border-white/30">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-0">
@@ -40,19 +40,21 @@ const Navbar = async () => {
               </Link>
 
               {/* User Avatar */}
-              <div className="flex items-center gap-2 px-2">
-                {user.image ? (
-                  <img
-                    src={user.image}
-                    alt={user.name || "User"}
-                    className="w-9 h-9 rounded-full object-cover border border-gray-300 shadow"
-                  />
-                ) : (
-                  <div className="w-9 h-9 flex items-center justify-center rounded-full bg-indigo-600 text-white font-semibold text-sm shadow">
-                    {user.name?.charAt(0).toUpperCase() || "U"}
-                  </div>
-                )}
-              </div>
+              <Link href={`/users/${user?.email}`}>
+                <div className="flex items-center gap-2 px-2">
+                  {user.image ? (
+                    <img
+                      src={user.image}
+                      alt={user.name || "User"}
+                      className="w-9 h-9 rounded-full object-cover border border-gray-300 shadow"
+                    />
+                  ) : (
+                    <div className="w-9 h-9 flex items-center justify-center rounded-full bg-indigo-600 text-white font-semibold text-sm shadow">
+                      {user.name?.charAt(0).toUpperCase() || "U"}
+                    </div>
+                  )}
+                </div>
+              </Link>
 
               {/* Logout */}
               <form method="post" action="/api/auth/signout">

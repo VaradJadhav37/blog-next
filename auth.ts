@@ -48,6 +48,13 @@ export const authOptions: NextAuthOptions = {
   
       return true;
     },
+    async session({ session, token }) {
+      // Do NOT overwrite the email — just add a userId field instead
+      if (session?.user && token?.sub) {
+        (session.user as any).userId = token.sub;
+      }
+      return session;
+    },
   },
   
   secret: process.env.NEXTAUTH_SECRET!,

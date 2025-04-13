@@ -1,59 +1,23 @@
-// app/blog/[id]/page.tsx
-import React from 'react'
-import ReactMarkdown from 'react-markdown'
+import { connectToDatabase } from "../../../../lib/mongodb";
+import Blog from "../../../models/Blog";
+import React from "react";
+import ReactMarkdown from "react-markdown";
+import Image from "next/image";
 
-interface Post {
-  _id: string
-  title: string
-  slug: { current: string }
-  category: string
-  content: string
-  image: string
-  author: {
-    name: string
-    image: string
-  }
+interface Params {
+  params: { id: string };
 }
 
-// Mock data
-const mockPosts: Post[] = [
-  {
-    _id: "1",
-    title: "Why React is Still Relevant in 2025",
-    slug: { current: "react-relevance-2025" },
-    category: "Web Development",
-    content: `
-## Introduction
-
-React has been around for a while...
-
-### Why It's Still Great
-
-- Component-based architecture
-- Strong ecosystem
-- Backed by Meta
-
-> React isn’t just surviving — it’s thriving.
-    `,
-    image: "https://source.unsplash.com/random/800x300/?react,web",
-    author: {
-      name: "Jane Doe",
-      image: "https://randomuser.me/api/portraits/women/44.jpg",
-    },
-  },
-  // Add more mock posts if needed
-]
-
-const Page = async ({ params }: { params: { id: string } }) => {
-  const id = params.id
-  const post = mockPosts.find((p) => p._id === id)
+const Page = async ({ params }: Params) => {
+  await connectToDatabase();
+  const post = await Blog.findById(params.id).populate("author");
 
   if (!post) {
     return (
       <main className="min-h-screen flex items-center justify-center">
         <p className="text-lg text-gray-500">Post not found.</p>
       </main>
-    )
+    );
   }
 
   return (
@@ -61,16 +25,17 @@ const Page = async ({ params }: { params: { id: string } }) => {
       <section className="max-w-4xl mx-auto text-center space-y-4">
         <h2 className="text-5xl font-extrabold text-pink-600 drop-shadow-sm">Explore the Story</h2>
         <p className="text-lg sm:text-xl text-neutral-700 max-w-2xl mx-auto">
-          Dive deep into <span className="font-semibold">{post.title}</span>, written by <span className="text-pink-500 font-semibold">{post.author.name}</span>. 
-          Discover insights, perspectives, and more — all wrapped in a beautifully crafted post.
+          Dive deep into <span className="font-semibold">{post.title}</span>, written by <span className="text-pink-500 font-semibold">{post.author.name}</span>.
         </p>
       </section>
 
       <article className="max-w-4xl mx-auto bg-white shadow-md rounded-2xl overflow-hidden">
         {post.image && (
-          <img
+          <Image
             src={post.image}
             alt={post.title}
+            width={800}
+            height={300}
             className="w-full h-[300px] object-cover"
           />
         )}
@@ -81,9 +46,11 @@ const Page = async ({ params }: { params: { id: string } }) => {
           <div className="flex items-center justify-between text-sm text-neutral-600">
             <div className="flex items-center gap-2">
               {post.author.image && (
-                <img
+                <Image
                   src={post.author.image}
                   alt={post.author.name}
+                  width={32}
+                  height={32}
                   className="w-8 h-8 rounded-full object-cover border"
                 />
               )}
@@ -100,7 +67,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
         </div>
       </article>
     </main>
-  )
-}
+  );
+};
 
-export default Page
+export default Page;

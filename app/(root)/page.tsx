@@ -7,7 +7,6 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Button } from "@/components/ui/button"
 import { Typewriter } from 'react-simple-typewriter'
 
-// Temporary interfaces in case you want to keep the structure
 interface Author {
   _id: string
   name: string
@@ -30,12 +29,15 @@ export default function Home() {
   const [blogs, setBlogs] = useState<Blog[]>([])
   const [searchQuery, setSearchQuery] = useState('')
 
-  // You can replace this with your own data fetching logic later
   useEffect(() => {
     const fetchBlogs = async () => {
-      // Sample local placeholder data (replace this with your source)
-      const mockBlogs: Blog[] = []
-      setBlogs(mockBlogs)
+      try {
+        const res = await fetch('/api/posts')
+        const data = await res.json()
+        setBlogs(data.posts || [])
+      } catch (error) {
+        console.error("Failed to fetch blogs:", error)
+      }
     }
 
     fetchBlogs()
@@ -46,9 +48,17 @@ export default function Home() {
     blog.category.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
+  // Function to get initials from a name
+  const getInitials = (name: string) => {
+    const nameArray = name.split(' ');
+    const initials = nameArray.length > 1
+      ? nameArray[0][0] + nameArray[1][0]
+      : nameArray[0][0];
+    return initials.toUpperCase();
+  }
+
   return (
     <main className="min-h-screen px-4 py-12 bg-gradient-to-br from-yellow-100 via-pink-100 to-blue-100">
-      {/* Hero Section */}
       <section className="text-center max-w-3xl mx-auto mb-16">
         <h1 className="text-5xl sm:text-6xl font-extrabold text-pink-600 mb-4">
           <Typewriter
@@ -56,7 +66,7 @@ export default function Home() {
             loop={0}
             cursor
             cursorStyle="|"
-            typeSpeed={80}
+            typeSpeed={75}
             deleteSpeed={60}
             delaySpeed={1250}
           />
@@ -65,7 +75,6 @@ export default function Home() {
           Explore tutorials, insights, and articles on modern web development.
         </p>
 
-        {/* Search */}
         <div className="flex flex-col sm:flex-row items-center gap-4 justify-center">
           <input
             type="text"
@@ -80,7 +89,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Blog Cards */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
         {filteredBlogs.length > 0 ? (
           filteredBlogs.map((blog) => (
@@ -91,12 +99,16 @@ export default function Home() {
                     {blog.title}
                   </CardTitle>
                   <div className="flex items-center gap-2 mt-3">
-                    {blog.author?.image && (
+                    {blog.author?.image ? (
                       <img
                         src={blog.author.image}
                         alt={blog.author.name}
                         className="w-8 h-8 rounded-full object-cover border-2 border-pink-200"
                       />
+                    ) : (
+                      <div className="w-8 h-8 flex items-center justify-center bg-purple-500/50 text-white rounded-full">
+                        {getInitials(blog.author?.name)}
+                      </div>
                     )}
                     <span className="font-medium text-sm text-gray-700">
                       {blog.author?.name}

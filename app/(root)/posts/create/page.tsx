@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Typewriter } from "react-simple-typewriter";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
-// Use your own API route or local DB function here
-const createPost = async (formData: FormData, content: string) => {
+// API call
+const createPost = async (formData: FormData, content: string, authorId: string) => {
   try {
     const res = await fetch("/api/posts", {
       method: "POST",
@@ -17,7 +18,7 @@ const createPost = async (formData: FormData, content: string) => {
         title: formData.get("title"),
         image: formData.get("image"),
         category: formData.get("category"),
-        authorId: formData.get("authorId"),
+        authorId,
         content,
       }),
       headers: {
@@ -34,10 +35,18 @@ const createPost = async (formData: FormData, content: string) => {
 
 const CreatePost = () => {
   const [content, setContent] = useState("");
+  const { data: session } = useSession();
   const router = useRouter();
 
   const handleFormSubmit = async (formData: FormData) => {
-    const result = await createPost(formData, content);
+    const authorEmail = session?.user?.email;
+
+    if (!authorEmail) {
+      alert("You must be logged in to create a post.");
+      return;
+    }
+
+    const result = await createPost(formData, content, authorEmail);
 
     if (result.status === "SUCCESS") {
       router.push(`/blog/${result._id}`);
@@ -76,7 +85,6 @@ const CreatePost = () => {
             <Input name="title" placeholder="Post Title" required />
             <Input name="image" placeholder="Image URL" required />
             <Input name="category" placeholder="Category" required />
-            <Input name="authorId" placeholder="Author ID" required />
 
             <div data-color-mode="light">
               <label className="block font-semibold mb-2">Post Content</label>
