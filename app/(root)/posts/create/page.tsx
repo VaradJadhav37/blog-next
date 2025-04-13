@@ -18,6 +18,7 @@ const createPost = async (formData: FormData, content: string, authorId: string)
         title: formData.get("title"),
         image: formData.get("image"),
         category: formData.get("category"),
+        description: formData.get("description"), // ✅ Include description
         authorId,
         content,
       }),
@@ -85,6 +86,9 @@ const CreatePost = () => {
             <Input name="title" placeholder="Post Title" required />
             <Input name="image" placeholder="Image URL" required />
             <Input name="category" placeholder="Category" required />
+
+            {/* ✅ Description Field */}
+            <Input name="description" placeholder="Short Description" required />
 
             <div data-color-mode="light">
               <label className="block font-semibold mb-2">Post Content</label>

@@ -2,8 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Search, Eye, ArrowRight } from 'lucide-react'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { Search, ArrowRight } from 'lucide-react'
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Typewriter } from 'react-simple-typewriter'
 
@@ -21,6 +27,7 @@ interface Blog {
   views: number
   category: string
   content: string
+  description: string
   image: string
   author: Author
 }
@@ -48,13 +55,13 @@ export default function Home() {
     blog.category.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  // Function to get initials from a name
   const getInitials = (name: string) => {
-    const nameArray = name.split(' ');
-    const initials = nameArray.length > 1
-      ? nameArray[0][0] + nameArray[1][0]
-      : nameArray[0][0];
-    return initials.toUpperCase();
+    const nameArray = name.split(' ')
+    const initials =
+      nameArray.length > 1
+        ? nameArray[0][0] + nameArray[1][0]
+        : nameArray[0][0]
+    return initials.toUpperCase()
   }
 
   return (
@@ -122,8 +129,9 @@ export default function Home() {
                       {blog.category}
                     </span>
                   </div>
+
                   {blog.image && (
-                    <div className="relative rounded-md overflow-hidden h-48">
+                    <div className="relative rounded-md overflow-hidden h-48 mb-3">
                       <img
                         src={blog.image}
                         alt={blog.title}
@@ -132,6 +140,12 @@ export default function Home() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                     </div>
                   )}
+
+                  {/* Blog description */}
+                  <p className="text-sm text-gray-600 mt-2 line-clamp-3">
+                    {blog.description}
+                  </p>
+
                   <Button variant="secondary" className="mt-4 w-full text-left hover:bg-pink-200/80 transition-colors color-pink-600">
                     <div className="flex items-center py-5 text-sm font-medium text-pink-600 hover:text-pink-500 transition-colors">
                       Read more

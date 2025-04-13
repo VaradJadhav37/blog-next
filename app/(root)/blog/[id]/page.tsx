@@ -25,7 +25,8 @@ const Page = async ({ params }: Params) => {
       <section className="max-w-4xl mx-auto text-center space-y-4">
         <h2 className="text-5xl font-extrabold text-pink-600 drop-shadow-sm">Explore the Story</h2>
         <p className="text-lg sm:text-xl text-neutral-700 max-w-2xl mx-auto">
-          Dive deep into <span className="font-semibold">{post.title}</span>, written by <span className="text-pink-500 font-semibold">{post.author.name}</span>.
+          Dive deep into <span className="font-semibold">{post.title}</span>, written by{" "}
+          <span className="text-pink-500 font-semibold">{post.author.name}</span>.
         </p>
       </section>
 
@@ -43,6 +44,7 @@ const Page = async ({ params }: Params) => {
         <div className="p-6 sm:p-10 space-y-6">
           <h1 className="text-4xl font-bold text-neutral-900">{post.title}</h1>
 
+          {/* Author and Category */}
           <div className="flex items-center justify-between text-sm text-neutral-600">
             <div className="flex items-center gap-2">
               {post.author.image && (
@@ -61,6 +63,14 @@ const Page = async ({ params }: Params) => {
             </span>
           </div>
 
+          {/* ✅ Description */}
+          {post.description && (
+            <p className="text-lg text-neutral-700 border-l-4 border-pink-500 pl-4 italic">
+              {post.description}
+            </p>
+          )}
+
+          {/* Content */}
           <div className="prose max-w-none prose-neutral">
             <ReactMarkdown>{post.content}</ReactMarkdown>
           </div>

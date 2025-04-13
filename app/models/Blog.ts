@@ -5,6 +5,7 @@ const BlogSchema = new mongoose.Schema({
   slug: { type: String, required: true, unique: true },
   views: { type: Number, default: 0 },
   category: { type: String, required: true },
+  description: { type: String },
   content: { type: String, required: true },
   image: { type: String, required: true },
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'Author', required: true },

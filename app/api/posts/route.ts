@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    const { title, image, category, content, authorId } = body;
+    const { title, image, category, description, content, authorId } = body;
 
     if (!title || !image || !category || !content || !authorId) {
       return NextResponse.json(
@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
       slug,
       image,
       category,
+      description,
       content,
       author: author._id,
     });
