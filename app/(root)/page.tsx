@@ -111,6 +111,7 @@ export default function Home() {
                         src={blog.author.image}
                         alt={blog.author.name}
                         className="w-8 h-8 rounded-full object-cover border-2 border-pink-200"
+                        loading="lazy"
                       />
                     ) : (
                       <div className="w-8 h-8 flex items-center justify-center bg-purple-500/50 text-white rounded-full">

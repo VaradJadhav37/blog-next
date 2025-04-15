@@ -41,11 +41,12 @@ const Navbar = async () => {
                   </button>
                 </Link>
 
-                <Link href={`/users/${user?.email}`}>
+                <Link href={`/users/${encodeURIComponent(user.email ?? "")}`}>
                   <div className="flex items-center gap-2 px-2">
                     {user.image ? (
                       <img
                         src={user.image}
+                        loading="lazy"
                         alt={user.name || "User"}
                         className="w-9 h-9 rounded-full object-cover border border-gray-300 shadow"
                       />
@@ -80,14 +81,14 @@ const Navbar = async () => {
             )}
           </div>
 
-          {/* Mobile menu button using details/summary */}
+          {/* Mobile menu button */}
           <details className="md:hidden relative">
             <summary className="list-none cursor-pointer p-2">
               <Menu className="h-6 w-6 open:hidden" />
               <X className="h-6 w-6 hidden open:block" />
               <span className="sr-only">Toggle menu</span>
             </summary>
-            
+
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
               <Link
                 href="/"
@@ -104,8 +105,9 @@ const Navbar = async () => {
                   >
                     Create Post
                   </Link>
+
                   <Link
-                    href={`/users/${user?.email}`}
+                    href={`/users/${encodeURIComponent(user.email ?? "")}`}
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     {user.image ? (
@@ -121,6 +123,7 @@ const Navbar = async () => {
                     )}
                     Profile
                   </Link>
+
                   <form method="post" action="/api/auth/signout">
                     <input type="hidden" name="callbackUrl" value="/" />
                     <button
