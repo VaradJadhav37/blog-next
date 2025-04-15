@@ -8,7 +8,6 @@ import slugify from "slugify";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-
     const { title, image, category, description, content, authorId } = body;
 
     if (!title || !image || !category || !content || !authorId) {
@@ -20,9 +19,7 @@ export async function POST(req: NextRequest) {
 
     await connectToDatabase();
 
-    // Try to find the author by email
     const author = await Author.findOne({ email: authorId });
-
     if (!author) {
       console.error("❌ Author not found for email:", authorId);
       return NextResponse.json(
@@ -31,7 +28,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Generate a unique slug from the title
     const baseSlug = slugify(title, { lower: true, strict: true });
     let slug = baseSlug;
     let suffix = 1;
@@ -52,16 +48,15 @@ export async function POST(req: NextRequest) {
     await newPost.save();
 
     return NextResponse.json({ status: "SUCCESS", ...newPost._doc });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("❌ Error in POST /api/posts:", error);
-    return NextResponse.json(
-      { status: "FAILED", error: error.message },
-      { status: 500 }
-    );
+    const errMsg =
+      error instanceof Error ? error.message : "An unknown error occurred";
+    return NextResponse.json({ status: "FAILED", error: errMsg }, { status: 500 });
   }
 }
 
-// ✅ GET method: Fetch all blog posts with populated author
+// GET method: Fetch all blog posts with populated author
 export async function GET() {
   try {
     await connectToDatabase();
@@ -71,11 +66,10 @@ export async function GET() {
       .sort({ createdAt: -1 });
 
     return NextResponse.json({ status: "SUCCESS", posts }, { status: 200 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("❌ Error in GET /api/posts:", error);
-    return NextResponse.json(
-      { status: "FAILED", error: error.message },
-      { status: 500 }
-    );
+    const errMsg =
+      error instanceof Error ? error.message : "An unknown error occurred";
+    return NextResponse.json({ status: "FAILED", error: errMsg }, { status: 500 });
   }
 }
