@@ -10,6 +10,18 @@ interface Params {
   params: { email: string };
 }
 
+interface Blog {
+  _id: string;
+  title: string;
+  slug: string;
+  views: number;
+  category: string;
+  content: string;
+  description: string;
+  image: string;
+  author: string; // If you populate author, use `Author` type instead
+}
+
 const Page = async ({ params }: Params) => {
   const decodedEmail = decodeURIComponent(params.email);
   await connectToDatabase();
@@ -23,16 +35,18 @@ const Page = async ({ params }: Params) => {
     );
   }
 
-  const blogs = await Blog.find({ author: author._id }).sort({ createdAt: -1 });
+  const blogs: Blog[] = await Blog.find({ author: author._id }).sort({
+    createdAt: -1,
+  });
 
   const getInitials = (name: string) => {
-    const nameArray = name.split(' ')
+    const nameArray = name.split(" ");
     const initials =
       nameArray.length > 1
         ? nameArray[0][0] + nameArray[1][0]
-        : nameArray[0][0]
-    return initials.toUpperCase()
-  }
+        : nameArray[0][0];
+    return initials.toUpperCase();
+  };
 
   return (
     <main className="min-h-screen px-4 py-12 bg-gradient-to-br from-blue-50 via-rose-50 to-yellow-50">
@@ -48,11 +62,13 @@ const Page = async ({ params }: Params) => {
           />
         ) : (
           <div className="w-20 h-20 mx-auto rounded-full border-4 border-pink-500 bg-red-500 flex items-center justify-center text-white font-bold text-xl">
-            {getInitials(author?.name)}
+            {getInitials(author.name)}
           </div>
         )}
 
-        <h2 className="text-4xl font-bold text-pink-600 drop-shadow-sm">{author.name}</h2>
+        <h2 className="text-4xl font-bold text-pink-600 drop-shadow-sm">
+          {author.name}
+        </h2>
         <p className="text-neutral-700">{author.bio}</p>
         <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
           <Mail className="w-4 h-4" />
@@ -64,8 +80,8 @@ const Page = async ({ params }: Params) => {
       <section className="max-w-5xl mx-auto mt-10">
         {blogs.length > 0 ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {blogs.map((blog: any) => (
-              <Link key={blog._id} href={`/blog/${blog.id}`}>
+            {blogs.map((blog: Blog) => (
+              <Link key={blog._id} href={`/blog/${blog._id}`}>
                 <div className="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-lg transition">
                   {blog.image && (
                     <Image
@@ -77,8 +93,12 @@ const Page = async ({ params }: Params) => {
                     />
                   )}
                   <div className="p-4 space-y-2">
-                    <h3 className="text-xl font-semibold text-neutral-800">{blog.title}</h3>
-                    <p className="text-sm text-gray-500 line-clamp-2">{blog.description}</p>
+                    <h3 className="text-xl font-semibold text-neutral-800">
+                      {blog.title}
+                    </h3>
+                    <p className="text-sm text-gray-500 line-clamp-2">
+                      {blog.description}
+                    </p>
                     <span className="inline-block text-xs px-2 py-1 bg-pink-100 text-pink-600 rounded-full mt-2">
                       {blog.category}
                     </span>
